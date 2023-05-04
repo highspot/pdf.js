@@ -233,6 +233,13 @@ const PDFViewerApplication = {
 
   // Called once when the document is loaded.
   async initialize(appConfig) {
+
+    console.log('lalalaal')
+    console.log('lalalaal')
+    console.log('lalalaal')
+    console.log('lalalaal')
+    alert('lalala')
+
     this.preferences = this.externalServices.createPreferences();
     this.appConfig = appConfig;
 
@@ -522,6 +529,7 @@ const PDFViewerApplication = {
       maxCanvasPixels: AppOptions.get("maxCanvasPixels"),
       enablePermissions: AppOptions.get("enablePermissions"),
       pageColors,
+      maxGroupSize: AppOptions.get("maxGroupSize"),
     });
     pdfRenderingQueue.setViewer(this.pdfViewer);
     pdfLinkService.setViewer(this.pdfViewer);
