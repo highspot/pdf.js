@@ -1346,9 +1346,6 @@ class CanvasGraphics {
       this.enableInterpolation ?? img.interpolate
     );
 
-    // works when hard-coded 3/3
-    // fillCtx.imageSmoothingEnabled = true;
-
     drawImageAtIntegerCoords(
       fillCtx,
       scaled,
@@ -2651,9 +2648,6 @@ class CanvasGraphics {
 
     this.ctx.imageSmoothingEnabled = false;
 
-    // works when hard-coded 1/3
-    // this.ctx.imageSmoothingEnabled = true;
-
     if (group.smask) {
       this.tempSMask = this.smaskStack.pop();
       this.restore();
@@ -3003,9 +2997,6 @@ class CanvasGraphics {
       getCurrentTransform(ctx),
       this.enableInterpolation ?? imgData.interpolate
     );
-
-    // works when hard-coded 2/3
-    // ctx.imageSmoothingEnabled = true;
 
     drawImageAtIntegerCoords(
       ctx,

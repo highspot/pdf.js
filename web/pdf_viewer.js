@@ -233,11 +233,9 @@ class PDFViewer {
   constructor(options) {
     const viewerVersion =
       typeof PDFJSDev !== "undefined" ? PDFJSDev.eval("BUNDLE_VERSION") : null;
-      // '3456645'
     if (version !== viewerVersion) {
       throw new Error(
-        // `The API version "${version}" does not match the Viewer version "${viewerVersion}".`
-        `The API version "${version}" does nosion "${viewerVersion}".`
+        `The API version "${version}" does not match the Viewer version "${viewerVersion}".`
       );
     }
     this.container = options.container;
@@ -283,8 +281,8 @@ class PDFViewer {
       options.isOffscreenCanvasSupported ?? true;
     this.maxCanvasPixels = options.maxCanvasPixels;
     this.l10n = options.l10n || NullL10n;
-    // this.#enablePermissions = options.enablePermissions || false;
-    // this.pageColors = options.pageColors || null;
+    this.#enablePermissions = options.enablePermissions || false;
+    this.pageColors = options.pageColors || null;
     this.enableInterpolation = options.enableInterpolation;
 
     if (typeof PDFJSDev === "undefined" || !PDFJSDev.test("MOZCENTRAL")) {
