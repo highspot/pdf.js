@@ -947,7 +947,8 @@ class CanvasGraphics {
     canvasFactory,
     filterFactory,
     { optionalContentConfig, markedContentStack = null },
-    annotationCanvasMap
+    annotationCanvasMap,
+    enableInterpolation
   ) {
     this.ctx = canvasCtx;
     this.current = new CanvasExtraState(
@@ -983,6 +984,7 @@ class CanvasGraphics {
     this.viewportScale = 1;
     this.outputScaleX = 1;
     this.outputScaleY = 1;
+    this.enableInterpolation = enableInterpolation;
 
     this._cachedScaleForStroking = null;
     this._cachedGetSinglePixelWidth = null;
@@ -1341,8 +1343,11 @@ class CanvasGraphics {
 
     fillCtx.imageSmoothingEnabled = getImageSmoothingEnabled(
       getCurrentTransform(fillCtx),
-      img.interpolate
+      this.enableInterpolation ?? img.interpolate
     );
+
+    // works when hard-coded 3/3
+    // fillCtx.imageSmoothingEnabled = true;
 
     drawImageAtIntegerCoords(
       fillCtx,
@@ -2643,7 +2648,11 @@ class CanvasGraphics {
     this.ctx = ctx;
     // Turn off image smoothing to avoid sub pixel interpolation which can
     // look kind of blurry for some pdfs.
+
     this.ctx.imageSmoothingEnabled = false;
+
+    // works when hard-coded 1/3
+    // this.ctx.imageSmoothingEnabled = true;
 
     if (group.smask) {
       this.tempSMask = this.smaskStack.pop();
@@ -2989,10 +2998,14 @@ class CanvasGraphics {
       imgToPaint,
       getCurrentTransformInverse(ctx)
     );
+
     ctx.imageSmoothingEnabled = getImageSmoothingEnabled(
       getCurrentTransform(ctx),
-      imgData.interpolate
+      this.enableInterpolation ?? imgData.interpolate
     );
+
+    // works when hard-coded 2/3
+    // ctx.imageSmoothingEnabled = true;
 
     drawImageAtIntegerCoords(
       ctx,

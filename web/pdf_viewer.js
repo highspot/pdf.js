@@ -122,6 +122,7 @@ function isValidAnnotationEditorMode(mode) {
  * @property {Object} [pageColors] - Overwrites background and foreground colors
  *   with user defined ones in order to improve readability in high contrast
  *   mode.
+ * * @property {boolean} [enableInterpolation] - Enables interpolation
  */
 
 class PDFPageViewBuffer {
@@ -232,9 +233,11 @@ class PDFViewer {
   constructor(options) {
     const viewerVersion =
       typeof PDFJSDev !== "undefined" ? PDFJSDev.eval("BUNDLE_VERSION") : null;
+      // '3456645'
     if (version !== viewerVersion) {
       throw new Error(
-        `The API version "${version}" does not match the Viewer version "${viewerVersion}".`
+        // `The API version "${version}" does not match the Viewer version "${viewerVersion}".`
+        `The API version "${version}" does nosion "${viewerVersion}".`
       );
     }
     this.container = options.container;
@@ -280,8 +283,9 @@ class PDFViewer {
       options.isOffscreenCanvasSupported ?? true;
     this.maxCanvasPixels = options.maxCanvasPixels;
     this.l10n = options.l10n || NullL10n;
-    this.#enablePermissions = options.enablePermissions || false;
-    this.pageColors = options.pageColors || null;
+    // this.#enablePermissions = options.enablePermissions || false;
+    // this.pageColors = options.pageColors || null;
+    this.enableInterpolation = options.enableInterpolation;
 
     if (typeof PDFJSDev === "undefined" || !PDFJSDev.test("MOZCENTRAL")) {
       if (
@@ -885,6 +889,7 @@ class PDFViewer {
             pageColors: this.pageColors,
             l10n: this.l10n,
             layerProperties,
+            enableInterpolation: this.enableInterpolation,
           });
           this._pages.push(pageView);
         }

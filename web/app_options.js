@@ -240,6 +240,11 @@ const defaultOptions = {
     value: "",
     kind: OptionKind.API,
   },
+  enableInterpolation: {
+    /** @type {boolean} */
+    value: true,
+    kind: OptionKind.API + OptionKind.PREFERENCE,
+  },
   enableXfa: {
     /** @type {boolean} */
     value: true,

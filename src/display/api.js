@@ -327,6 +327,7 @@ function getDocument(src) {
   const disableStream = src.disableStream === true;
   const disableAutoFetch = src.disableAutoFetch === true;
   const pdfBug = src.pdfBug === true;
+  const enableInterpolation = src.enableInterpolation === true;
 
   // Parameters whose default values depend on other parameters.
   const length = rangeTransport ? rangeTransport.length : src.length ?? NaN;
@@ -421,6 +422,7 @@ function getDocument(src) {
     disableAutoFetch,
     pdfBug,
     styleElement,
+    enableInterpolation,
   };
 
   worker.promise
@@ -1516,6 +1518,7 @@ class PDFPageProxy {
       useRequestAnimationFrame: !intentPrint,
       pdfBug: this._pdfBug,
       pageColors,
+      enableInterpolation: this._transport.loadingParams.enableInterpolation,
     });
 
     (intentState.renderTasks ||= new Set()).add(internalRenderTask);
@@ -3098,10 +3101,11 @@ class WorkerTransport {
   }
 
   get loadingParams() {
-    const { disableAutoFetch, enableXfa } = this._params;
+    const { disableAutoFetch, enableXfa, enableInterpolation } = this._params;
     return shadow(this, "loadingParams", {
       disableAutoFetch,
       enableXfa,
+      enableInterpolation,
     });
   }
 }
@@ -3266,6 +3270,7 @@ class InternalRenderTask {
     useRequestAnimationFrame = false,
     pdfBug = false,
     pageColors = null,
+    enableInterpolation,
   }) {
     this.callback = callback;
     this.params = params;
@@ -3279,6 +3284,7 @@ class InternalRenderTask {
     this.filterFactory = filterFactory;
     this._pdfBug = pdfBug;
     this.pageColors = pageColors;
+    this.enableInterpolation = enableInterpolation;
 
     this.running = false;
     this.graphicsReadyCallback = null;
@@ -3332,7 +3338,8 @@ class InternalRenderTask {
       this.canvasFactory,
       this.filterFactory,
       { optionalContentConfig },
-      this.annotationCanvasMap
+      this.annotationCanvasMap,
+      this.enableInterpolation
     );
     this.gfx.beginDrawing({
       transform,
