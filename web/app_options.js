@@ -260,9 +260,9 @@ const defaultOptions = {
     value: true,
     kind: OptionKind.API,
   },
-  maxGroupSize: {
-    /** @type {number} */
-    value: 4096,
+  disableGroupSizeScaling: {
+    /** @type {boolean} */
+    value: false,
     kind: OptionKind.API + OptionKind.PREFERENCE,
   },
   maxImageSize: {

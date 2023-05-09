@@ -45,7 +45,7 @@ import { isNodeJS } from "../shared/is_node.js";
 const MIN_FONT_SIZE = 16;
 // Maximum font size that would be used during canvas fillText operations.
 const MAX_FONT_SIZE = 100;
-// const MAX_GROUP_SIZE = 4096;
+const MAX_GROUP_SIZE = 4096;
 
 // Defines the time the `executeOperatorList`-method is going to be executing
 // before it stops and schedules a continue of execution.
@@ -948,7 +948,7 @@ class CanvasGraphics {
     filterFactory,
     { optionalContentConfig, markedContentStack = null },
     annotationCanvasMap,
-    maxGroupSize
+    disableGroupSizeScaling
   ) {
     this.ctx = canvasCtx;
     this.current = new CanvasExtraState(
@@ -984,7 +984,7 @@ class CanvasGraphics {
     this.viewportScale = 1;
     this.outputScaleX = 1;
     this.outputScaleY = 1;
-    this.maxGroupSize = maxGroupSize;
+    this.disableGroupSizeScaling = disableGroupSizeScaling;
 
     this._cachedScaleForStroking = null;
     this._cachedGetSinglePixelWidth = null;
@@ -2571,25 +2571,18 @@ class CanvasGraphics {
     let drawnHeight = Math.max(Math.ceil(bounds[3]) - offsetY, 1);
     let scaleX = 1,
       scaleY = 1;
-    // if (drawnWidth > MAX_GROUP_SIZE) {
-    //   scaleX = drawnWidth / MAX_GROUP_SIZE;
-    //   drawnWidth = MAX_GROUP_SIZE;
-    // }
 
-    // TODO: just use a boolean to skip this?
-    if (drawnWidth > this.maxGroupSize) {
-      scaleX = drawnWidth / this.maxGroupSize;
-      drawnWidth = this.maxGroupSize;
-    }
-
-    // if (drawnHeight > MAX_GROUP_SIZE) {
-    //   scaleY = drawnHeight / MAX_GROUP_SIZE;
-    //   drawnHeight = MAX_GROUP_SIZE;
-    // }
-
-    if (drawnHeight > this.maxGroupSize) {
-      scaleY = drawnHeight / this.maxGroupSize;
-      drawnHeight = this.maxGroupSize;
+    // if disableGroupSizeScaling is true, don't scale using group size
+    if(!this.disableGroupSizeScaling) {
+      if (drawnWidth > MAX_GROUP_SIZE) {
+        scaleX = drawnWidth / MAX_GROUP_SIZE;
+        drawnWidth = MAX_GROUP_SIZE;
+      }
+  
+      if (drawnHeight > MAX_GROUP_SIZE) {
+        scaleY = drawnHeight / MAX_GROUP_SIZE;
+        drawnHeight = MAX_GROUP_SIZE;
+      }
     }
 
     this.current.startNewPathAndClipBox([0, 0, drawnWidth, drawnHeight]);
