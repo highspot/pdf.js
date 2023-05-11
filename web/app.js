@@ -233,13 +233,6 @@ const PDFViewerApplication = {
 
   // Called once when the document is loaded.
   async initialize(appConfig) {
-
-    console.log('lalalaal')
-    console.log('lalalaal')
-    console.log('lalalaal')
-    console.log('lalalaal')
-    alert('lalala')
-
     this.preferences = this.externalServices.createPreferences();
     this.appConfig = appConfig;
 
