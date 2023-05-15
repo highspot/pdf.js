@@ -327,6 +327,8 @@ function getDocument(src) {
   const disableStream = src.disableStream === true;
   const disableAutoFetch = src.disableAutoFetch === true;
   const pdfBug = src.pdfBug === true;
+  const enableInterpolation = src.enableInterpolation === true; // blurry fix HS-65981
+  const disableGroupSizeScaling = src.disableGroupSizeScaling === true; // tall fix HS-65980
 
   // Parameters whose default values depend on other parameters.
   const length = rangeTransport ? rangeTransport.length : src.length ?? NaN;
@@ -421,6 +423,8 @@ function getDocument(src) {
     disableAutoFetch,
     pdfBug,
     styleElement,
+    enableInterpolation, // blurry fix HS-65981
+    disableGroupSizeScaling, // tall fix HS-65980
   };
 
   worker.promise
@@ -1516,6 +1520,8 @@ class PDFPageProxy {
       useRequestAnimationFrame: !intentPrint,
       pdfBug: this._pdfBug,
       pageColors,
+      enableInterpolation: this._transport.loadingParams.enableInterpolation, // blurry fix HS-65981
+      disableGroupSizeScaling: this._transport.loadingParams.disableGroupSizeScaling, // tall fix HS-65980
     });
 
     (intentState.renderTasks ||= new Set()).add(internalRenderTask);
@@ -3089,10 +3095,12 @@ class WorkerTransport {
   }
 
   get loadingParams() {
-    const { disableAutoFetch, enableXfa } = this._params;
+    const { disableAutoFetch, enableXfa, enableInterpolation, disableGroupSizeScaling } = this._params; // blurry fix HS-65981 // tall fix HS-65980
     return shadow(this, "loadingParams", {
       disableAutoFetch,
       enableXfa,
+      enableInterpolation, // blurry fix HS-65981
+      disableGroupSizeScaling, // tall fix HS-65980
     });
   }
 }
@@ -3257,6 +3265,8 @@ class InternalRenderTask {
     useRequestAnimationFrame = false,
     pdfBug = false,
     pageColors = null,
+    enableInterpolation, // blurry fix HS-65981
+    disableGroupSizeScaling, // tall fix HS-65980
   }) {
     this.callback = callback;
     this.params = params;
@@ -3270,6 +3280,8 @@ class InternalRenderTask {
     this.filterFactory = filterFactory;
     this._pdfBug = pdfBug;
     this.pageColors = pageColors;
+    this.enableInterpolation = enableInterpolation; // blurry fix HS-65981
+    this.disableGroupSizeScaling = disableGroupSizeScaling; // tall fix HS-65980
 
     this.running = false;
     this.graphicsReadyCallback = null;
@@ -3324,7 +3336,9 @@ class InternalRenderTask {
       this.filterFactory,
       { optionalContentConfig },
       this.annotationCanvasMap,
-      this.pageColors
+      this.pageColors,
+      this.enableInterpolation, // blurry fix HS-65981
+      this.disableGroupSizeScaling, // tall fix HS-65980
     );
     this.gfx.beginDrawing({
       transform,

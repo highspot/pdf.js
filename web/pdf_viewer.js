@@ -121,6 +121,8 @@ function isValidAnnotationEditorMode(mode) {
  * @property {Object} [pageColors] - Overwrites background and foreground colors
  *   with user defined ones in order to improve readability in high contrast
  *   mode.
+ * @property {boolean} [enableInterpolation] - Enables interpolation // blurry fix HS-65981
+ * @property {boolean} [disableGroupSizeScaling] - Disables scaling based on group size // tall fix HS-65980
  */
 
 class PDFPageViewBuffer {
@@ -277,6 +279,8 @@ class PDFViewer {
     this.l10n = options.l10n || NullL10n;
     this.#enablePermissions = options.enablePermissions || false;
     this.pageColors = options.pageColors || null;
+    this.enableInterpolation = options.enableInterpolation; // blurry fix HS-65981
+    this.disableGroupSizeScaling = options.disableGroupSizeScaling; // tall fix HS-65980
 
     if (typeof PDFJSDev === "undefined" || !PDFJSDev.test("MOZCENTRAL")) {
       if (
@@ -881,6 +885,8 @@ class PDFViewer {
             pageColors: this.pageColors,
             l10n: this.l10n,
             layerProperties,
+            enableInterpolation: this.enableInterpolation, // blurry fix HS-65981
+            disableGroupSizeScaling: this.disableGroupSizeScaling, // tall fix HS-65980
           });
           this._pages.push(pageView);
         }

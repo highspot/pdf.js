@@ -948,7 +948,9 @@ class CanvasGraphics {
     filterFactory,
     { optionalContentConfig, markedContentStack = null },
     annotationCanvasMap,
-    pageColors
+    pageColors,
+    enableInterpolation, // blurry fix HS-65981
+    disableGroupSizeScaling // tall fix HS-65980
   ) {
     this.ctx = canvasCtx;
     this.current = new CanvasExtraState(
@@ -985,6 +987,8 @@ class CanvasGraphics {
     this.outputScaleX = 1;
     this.outputScaleY = 1;
     this.pageColors = pageColors;
+    this.enableInterpolation = enableInterpolation; // blurry fix HS-65981
+    this.disableGroupSizeScaling = disableGroupSizeScaling; // tall fix HS-65980
 
     this._cachedScaleForStroking = null;
     this._cachedGetSinglePixelWidth = null;
@@ -1346,7 +1350,7 @@ class CanvasGraphics {
 
     fillCtx.imageSmoothingEnabled = getImageSmoothingEnabled(
       getCurrentTransform(fillCtx),
-      img.interpolate
+      this.enableInterpolation ?? img.interpolate // blurry fix HS-65981
     );
 
     drawImageAtIntegerCoords(
@@ -2575,13 +2579,18 @@ class CanvasGraphics {
     let drawnHeight = Math.max(Math.ceil(bounds[3]) - offsetY, 1);
     let scaleX = 1,
       scaleY = 1;
-    if (drawnWidth > MAX_GROUP_SIZE) {
-      scaleX = drawnWidth / MAX_GROUP_SIZE;
-      drawnWidth = MAX_GROUP_SIZE;
-    }
-    if (drawnHeight > MAX_GROUP_SIZE) {
-      scaleY = drawnHeight / MAX_GROUP_SIZE;
-      drawnHeight = MAX_GROUP_SIZE;
+
+    // tall fix HS-65980
+    // if disableGroupSizeScaling is true, don't scale using group size
+    if(!this.disableGroupSizeScaling) {
+      if (drawnWidth > MAX_GROUP_SIZE) {
+        scaleX = drawnWidth / MAX_GROUP_SIZE;
+        drawnWidth = MAX_GROUP_SIZE;
+      }
+      if (drawnHeight > MAX_GROUP_SIZE) {
+        scaleY = drawnHeight / MAX_GROUP_SIZE;
+        drawnHeight = MAX_GROUP_SIZE;
+      }
     }
 
     this.current.startNewPathAndClipBox([0, 0, drawnWidth, drawnHeight]);
@@ -3001,7 +3010,7 @@ class CanvasGraphics {
     );
     ctx.imageSmoothingEnabled = getImageSmoothingEnabled(
       getCurrentTransform(ctx),
-      imgData.interpolate
+      this.enableInterpolation ?? imgData.interpolate // blurry fix HS-65981
     );
 
     drawImageAtIntegerCoords(

@@ -228,6 +228,11 @@ const defaultOptions = {
     value: false,
     kind: OptionKind.API + OptionKind.PREFERENCE,
   },
+  disableGroupSizeScaling: { // tall fix HS-65980
+    /** @type {boolean} */
+    value: false,
+    kind: OptionKind.API + OptionKind.PREFERENCE,
+  },
   disableRange: {
     /** @type {boolean} */
     value: false,
@@ -242,6 +247,11 @@ const defaultOptions = {
     /** @type {string} */
     value: "",
     kind: OptionKind.API,
+  },
+  enableInterpolation: { // blurry fix HS-65981
+    /** @type {boolean} */
+    value: true,
+    kind: OptionKind.API + OptionKind.PREFERENCE,
   },
   enableXfa: {
     /** @type {boolean} */

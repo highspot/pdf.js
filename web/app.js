@@ -515,6 +515,8 @@ const PDFViewerApplication = {
       maxCanvasPixels: AppOptions.get("maxCanvasPixels"),
       enablePermissions: AppOptions.get("enablePermissions"),
       pageColors,
+      enableInterpolation: AppOptions.get("enableInterpolation"), // blurry fix HS-65981
+      disableGroupSizeScaling: AppOptions.get("disableGroupSizeScaling"), // tall fix HS-65980
     });
     pdfRenderingQueue.setViewer(this.pdfViewer);
     pdfLinkService.setViewer(this.pdfViewer);
